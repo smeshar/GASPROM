@@ -2,6 +2,7 @@ import random
 import time
 import math
 import sqlite3
+import math
 
 def logo():
     print('---')
@@ -22,6 +23,28 @@ upordown = 1
 nextday = True
 elecnul = False
 elec = 0
+
+def decode():
+    outfile = open("table.txt", "w")
+
+    num1 = float.hex(float(bal))
+    num2 = float.hex(float(acs_player))
+    num3 = float.hex(float(acs))
+    num4 = float.hex(float(k))
+    num5 = float.hex(float(day))
+    num6 = float.hex(float(elec))
+
+    outfile.write(num1 + '\n' + num2 + '\n' + num3 + '\n' + num4 + '\n' + num5 + '\n' + num6 + '\n')
+    outfile.close()
+
+def encode(i):
+    infile = open("table.txt", "r")
+    alllines = infile.readlines()
+    if (i != 5): string = alllines[i][0:-1] 
+    else: string = alllines[i]
+    x = float(float.fromhex(string))
+    infile.close()
+    return x
 
 def newacs(lastacs, upordown):
     choice = random.randint(1, 10)
@@ -140,32 +163,22 @@ while True:
     if ans == '5':
         print('---')
         print(' Сохраняемся')
-        print('---')
 
-        outfile = open("table.txt", "w")
-        outfile.write(str(bal) + '\n')
-        outfile.write(str(acs_player) + '\n')
-        outfile.write(str(acs) + '\n')
-        outfile.write(str(k) + '\n')
-        outfile.write(str(day) + '\n')
-        outfile.close()
+        decode()
 
-        time.sleep(3)
+        time.sleep(1)
 
     if ans == '6':
         print('---')
         print(' Загружаем сохранение')
         print('---')
-        infile = open("table.txt", "r")
 
-        alllines = infile.readlines()
-        bal = float(alllines[0][0:-1])
-        acs_player = float(alllines[1][0:-1])
-        acs = float(alllines[2][0:-1])
-        k = float(alllines[3][0:-1])
-        day = float(alllines[4][0:-1])
-
-        infile.close()
+        bal = encode(0)
+        acs_player = encode(1)
+        acs = encode(2)
+        k = encode(3)
+        day = encode(4)
+        elec = encode(5)
 
         time.sleep(1)
 
