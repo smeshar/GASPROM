@@ -57,9 +57,9 @@ while True:
 
     if nextday:
         lastacs = acs
-        acs = random.uniform(lastacs-10, lastacs+10)
+        acs = newacs(acs, upordown)
         if not elecnul:
-            elec += random.uniform(10, 500)
+            elec += random.uniform(10, 1000)
         day += 1
         nextday = False
 
