@@ -82,8 +82,7 @@ while True:
     if nextday:
         lastacs = acs
         acs = newacs(acs, upordown)
-        if not elecnul:
-            elec += random.uniform(10, 1000)
+        elec += random.uniform(10, 1000)
         day += 1
         nextday = False
 
@@ -111,7 +110,7 @@ while True:
         print(f"--- \n Покупка выполняется...")
         time.sleep(0.5)
         
-        hackers = random.randint(0, 300)
+        hackers = random.randint(0, 10000)
         hackers /= 100
         print(f"\n Хакеры взломали биржу и ограбили вас на {hackers} рубля")
         print(f" Купите защиту от DDOS-атак за 1.000.000 в магазине\n")
@@ -167,7 +166,6 @@ while True:
         bal -= elec
         elec = 0
         nextday = True
-        elecnul = True
 
     if ans == '5':
         print('---')
@@ -199,59 +197,86 @@ while True:
         print(' 3. ноутбук Apelsin Book - 100.000 рублей')
         print(' 4. бугати - 10.000.000 рублей')
         print(' 5. квартира в майам... в чебоксарах - 15.000.000 рублей')
+        print(' 6. защита от DDOS-атак (нет в наличии)')
         print('---')
         goods = int(input('Чтобы выбрать товар напиши его номер: '))
 
-        match goods:
-            case 1:
-                print('---')
-                if bal < 2500:
-                    print('Недостаточно средств')
-                    time.sleep(1)
-                    continue
-                time.sleep(0.5)
-                print("Заходим в доту...")
-                time.sleep(0.5)
-                print("Аркана на сфа куплена!")
-                bal -= 2500
-                inventary.append("Аркана на сфа")
-                nextday = True
-            case 2:
-                print('---')
-                if bal < 10000:
-                    print('Недостаточно средств')
-                    time.sleep(1)
-                    continue
-                time.sleep(0.5)
-                print("Ищем на складе")
-                time.sleep(0.5)
-                print("Телевизор куплен!")
-                
-                # можно еще добавить функцию телевизора посмотреть новости
-                bal -= 10000
-                inventary.append("Телевизор")
-                nextday = True
-            case 3:
-                print('---')
-                if bal < 100000:
-                    print('Недостаточно средств')
-                    time.sleep(1)
-                    continue
-                time.sleep(0.5)
-                print("Ищем на складе")
-                time.sleep(0.5)
-                print("САМЫЙ МОЩНЫЙ ИГРОВОЙ НОУТБУК ТОЧНО НЕ ДЛЯ УЧЕБЫ ApelsinBook куплен!")
+        if goods == 1:
+            print('---')
+            if bal < 2500:
+                print('Недостаточно средств')
+                time.sleep(1)
+                continue
+            time.sleep(0.5)
+            print("Заходим в доту...")
+            time.sleep(0.5)
+            print("Аркана на сфа куплена!")
+            bal -= 2500
+            inventary.append("Аркана на сфа")
+            nextday = True
+        elif goods == 2:
+            print('---')
+            if bal < 10000:
+                print('Недостаточно средств')
+                time.sleep(1)
+                continue
+            time.sleep(0.5)
+            print("Ищем на складе")
+            time.sleep(0.5)
+            print("Телевизор куплен!")
+            
+            # можно еще добавить функцию телевизора посмотреть новости
+            bal -= 10000
+            inventary.append("Телевизор")
+            nextday = True
+        elif goods == 3:
+            print('---')
+            if bal < 100000:
+                print('Недостаточно средств')
+                time.sleep(1)
+                continue
+            time.sleep(0.5)
+            print("Ищем на складе")
+            time.sleep(0.5)
+            print("САМЫЙ МОЩНЫЙ ИГРОВОЙ НОУТБУК ТОЧНО НЕ ДЛЯ УЧЕБЫ ApelsinBook куплен!")
+            print("Вы получили достижение ГЕЙМЕР")
 
-                # можно тоже добавить функцию ноута
-                bal -= 100000
-                inventary.append("ApelsinBook")
-                nextday = True
-            case 4:
-                print()
-            case 5:
-                print()
-            case _:
-                print("Такого продукта нет")
+            # можно тоже добавить функцию ноута
+            bal -= 100000
+            inventary.append("ApelsinBook")
+            nextday = True
+        elif goods == 4:
+            print('---')
+            if bal < 10000000:
+                print('Недостаточно средств')
+                time.sleep(1)
+                continue
+            time.sleep(0.5)
+            print("Ищем дилера")
+            time.sleep(0.5)
+            print("Вы приобрели бугати верон!")
+            print("Вы получили достижение А ВОК АП ИН Э НЬЮ БУГАТИ")
+
+            bal -= 100000
+            inventary.append("ApelsinBook")
+            nextday = True
+        elif goods == 5:
+            print('---')
+            if bal < 15000000:
+                print('Недостаточно средств')
+                time.sleep(1)
+                continue
+            time.sleep(0.5)
+            print("Звоним маме Кирилла")
+            time.sleep(0.5)
+            print("Вы приобрели квартиру в Чебосраках")
+            print("Вы получили достижение ЭПЕ КИРИЛЛ ЯТЛА")
+            
+            bal -= 100000
+            inventary.append("ApelsinBook")
+            nextday = True
+        else:
+            print("Такого продукта нет")
 
         time.sleep(0.5)
 
