@@ -23,6 +23,7 @@ upordown = 1
 nextday = True
 elecnul = False
 elec = 0
+inventary = []
 
 def decode():
     outfile = open("table.txt", "w")
@@ -89,7 +90,9 @@ while True:
     print(f"--- \n Акции Газпрома стоят на данный момент: {round(acs, 2)} \n---", )
     acs_player = round(k * acs, 2)
 
-    print(f" Ваш баланс: {round(bal, 2)} \n Ваш баланс в акциях: {acs_player} \n День: {day} \n Неоплаченный счет в банке: {round(elec, 2)} \n---")
+    print(f" Ваш баланс: {round(bal, 2)} \n Ваш баланс в акциях: {acs_player} \n День: {day} \n Неоплаченный счет в банке: {round(elec, 2)} \n Купленные приколюхи: ", end="")
+    print(*inventary)
+    print(' \n---')
     print(
         f" Чтобы приобрести акции нажмите 1 \n Чтобы продать акции нажмите 2 \n Чтобы подождать нажмите 3 \n Чтобы оплатить долг нажмите 4 \n Чтобы сохранить игру нажмите 5 \n Чтобы загрузить сохранение нажмите 6 \n Чтобы зайти в магазин нажмите 7 \n---")
     ans = input()
@@ -190,8 +193,65 @@ while True:
 
     if ans == '7':
         print('---')
-        print('Данная функция пока недоступна')
-        print('Ожидайте нового патча')
+        print('МАГАЗИН DИS')
+        print(' 1. аркана на сфа - 2.500 рублей')
+        print(' 2. телевизор - 10.000 рублей')
+        print(' 3. ноутбук Apelsin Book - 100.000 рублей')
+        print(' 4. бугати - 10.000.000 рублей')
+        print(' 5. квартира в майам... в чебоксарах - 15.000.000 рублей')
+        print('---')
+        goods = int(input('Чтобы выбрать товар напиши его номер: '))
+
+        match goods:
+            case 1:
+                print('---')
+                if bal < 2500:
+                    print('Недостаточно средств')
+                    time.sleep(1)
+                    continue
+                time.sleep(0.5)
+                print("Заходим в доту...")
+                time.sleep(0.5)
+                print("Аркана на сфа куплена!")
+                bal -= 2500
+                inventary.append("Аркана на сфа")
+                nextday = True
+            case 2:
+                print('---')
+                if bal < 10000:
+                    print('Недостаточно средств')
+                    time.sleep(1)
+                    continue
+                time.sleep(0.5)
+                print("Ищем на складе")
+                time.sleep(0.5)
+                print("Телевизор куплен!")
+                
+                # можно еще добавить функцию телевизора посмотреть новости
+                bal -= 10000
+                inventary.append("Телевизор")
+                nextday = True
+            case 3:
+                print('---')
+                if bal < 100000:
+                    print('Недостаточно средств')
+                    time.sleep(1)
+                    continue
+                time.sleep(0.5)
+                print("Ищем на складе")
+                time.sleep(0.5)
+                print("САМЫЙ МОЩНЫЙ ИГРОВОЙ НОУТБУК ТОЧНО НЕ ДЛЯ УЧЕБЫ ApelsinBook куплен!")
+
+                # можно тоже добавить функцию ноута
+                bal -= 100000
+                inventary.append("ApelsinBook")
+                nextday = True
+            case 4:
+                print()
+            case 5:
+                print()
+            case _:
+                print("Такого продукта нет")
 
         time.sleep(0.5)
 
