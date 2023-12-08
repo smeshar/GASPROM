@@ -1,7 +1,7 @@
 from functions import *
 from termcolor import colored
 import plotext as plt
-from uuid import getnode as get_mac
+from uuid import getnode as get_user
 
 balance = 1000
 player_stocks = 0
@@ -14,8 +14,13 @@ elecnul = False
 electricity = 0
 inventary = []
 prices = [stocks_price]
-storymode = True
-mac = get_mac()
+
+try:
+    storymode = ENCODE(6)
+except IndexError:
+    storymode = True
+    
+user = get_user()
 
 LOGO()
 
@@ -155,7 +160,7 @@ while True:
         print('---')
         print(' Сохраняемся')
 
-        DECODE(balance, player_stocks, stocks_price, k, day, electricity, storymode, mac)
+        DECODE(balance, player_stocks, stocks_price, k, day, electricity, int(storymode), user)
 
         time.sleep(0.5)
 
@@ -163,7 +168,7 @@ while True:
     if query == '6':
         print('---\n Загружаем сохранение\n---')
 
-        if mac != ENCODE(7):
+        if user != ENCODE(7):
             print("Неверный пользователь")
             time.sleep(1)
             continue
