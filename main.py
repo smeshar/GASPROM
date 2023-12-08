@@ -1,6 +1,7 @@
 from functions import *
 from termcolor import colored
 import plotext as plt
+from uuid import getnode as get_mac
 
 balance = 1000
 player_stocks = 0
@@ -13,15 +14,21 @@ elecnul = False
 electricity = 0
 inventary = []
 prices = [stocks_price]
+storymode = True
+mac = get_mac()
 
 LOGO()
+
+if storymode:
+    START()
+    storymode = False
 
 while True:
     if electricity >= 30000:
         print('--- \n'
               ' Ваш долг превысил 30000 рублей')
         time.sleep(5)
-        print(' Вы проиграли...')
+        print(' Вы проиграли... Вас выселили')
         print(' Спасибо что поиграли в мою игру, можете попробовать заново!')
         print('---')
         time.sleep(2)
@@ -36,6 +43,7 @@ while True:
         day += 1
         next_day = False
 
+    DRAW_PLOT(prices)
     # EVERYDAY NEWS
     print(f"--- \n"
           f" Акции Газпрома стоят на данный момент: {round(stocks_price, 2)} \n"
@@ -43,7 +51,6 @@ while True:
 
     player_stocks = round(k * stocks_price, 2)
 
-    DRAW_PLOT(prices)
 
     print(
         f" Ваш баланс: {round(balance, 2)} \n"
@@ -148,19 +155,27 @@ while True:
         print('---')
         print(' Сохраняемся')
 
-        DECODE()
+        DECODE(balance, player_stocks, stocks_price, k, day, electricity, storymode, mac)
 
         time.sleep(0.5)
 
     # LOAD SAVE
     if query == '6':
         print('---\n Загружаем сохранение\n---')
+
+        if mac != ENCODE(7):
+            print("Неверный пользователь")
+            time.sleep(1)
+            continue
+
         balance = ENCODE(0)
         player_stocks = ENCODE(1)
         stocks_price = ENCODE(2)
         k = ENCODE(3)
         day = ENCODE(4)
         electricity = ENCODE(5)
+        storymode = ENCODE(6)
+
 
         time.sleep(1)
 
