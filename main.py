@@ -32,7 +32,7 @@ while True:
         stocks_price = NEWACS(stocks_price, prices)
         prices.append(stocks_price)
         if not elecnul:
-            ELEC_PLUS(electricity)
+            electricity = ELEC_PLUS(electricity)
         day += 1
         next_day = False
 
