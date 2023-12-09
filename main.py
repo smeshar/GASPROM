@@ -1,3 +1,5 @@
+import time
+
 from functions import *
 import plotext as plt
 from uuid import getnode as get_user
@@ -79,12 +81,22 @@ while True:
         f" Чтобы зайти в магазин нажмите 7 \n"
         f"---")
 
-    query = input()
+    try:
+        query = int(input())
+    except:
+        print("Неверный ввод")
+        time.sleep(1)
+        continue
 
     # BUY STOCKS
-    if query == "1":
+    if query == 1:
         print(f"--- \n Введите кол-во рублей \n Ваш баланс позволяет купить акции на: {balance} рублей \n---")
-        inp = float(input())
+        try:
+            inp = float(input())
+        except:
+            print("Неверный ввод")
+            time.sleep(1)
+            continue
         if inp > balance:
             print("У вас слишком маленький баланс")
             time.sleep(0.5)
@@ -95,9 +107,12 @@ while True:
 
         hackers = random.randint(0, 300)
         hackers /= 100
-        print(f"\n Хакеры взломали биржу и ограбили вас на {hackers} рубля\n"
-              f" Купите защиту от DDOS-атак за 1.000.000 в магазине\n"
-              f" Поздравляем, вы купили акции на {inp - hackers} рублей по цене {round(stocks_price, 2)}!\n")
+
+        if not "защита от DDOS-атак" in inventary:
+            print(f"Хакеры взломали биржу и ограбили вас на {hackers} рублей.\n"
+                  f" Купите защиту от DDOS-атак за 1.000.000 в магазине")
+
+        print(f" Поздравляем, вы купили акции на {inp - hackers} рублей по цене {round(stocks_price, 2)}!\n")
         BUY_SOUND()
         inp -= hackers
         inp /= stocks_price
@@ -105,16 +120,16 @@ while True:
         k += inp
 
     # SELL STOCKS
-    if query == "2":
+    if query == 2:
         print(f"--- \nВведите кол-во рублей на которые вы хотите продать акции")
         print(f"Ваш баланс позволяет продать: {player_stocks} рублей \n---")
-        if (player_stocks // stocks_price) < 1:
-            print("У вас нет акций")
-            print("Стоит подождать")
+        try:
+            inp = float(input())
+        except:
+            print("Неверный ввод")
             time.sleep(1)
-            print()
             continue
-        inp = float(input())
+
         if inp > player_stocks:
             print("Вы ввели число большее чем вы можете продать")
             time.sleep(1)
@@ -135,28 +150,26 @@ while True:
         next_day = True
 
     # SKIP DAY
-    if query == "3":
+    if query == 3:
         #stocks_price = NEWACS(stocks_price, up_or_down)
         next_day = True
         continue
 
     # PAY FOR ELECTRICITY
-    if query == '4':
+    if query == 4:
         print('---')
-        if balance < electricity:
-            print('Недостаточно средств')
-            continue
         time.sleep(0.5)
         print("Переводим деньги...")
         time.sleep(0.5)
         print("Перевод выполнен успешно...")
         PAY_ELEC()
-        balance -= electricity
-        electricity = 0
+        electricitylast = electricity
+        balance -= electricitylast
+        electricity -= electricitylast
         next_day = True
 
     # SAVE PROGESS
-    if query == '5':
+    if query == 5:
         print('---')
         print(' Сохраняемся')
 
@@ -166,7 +179,7 @@ while True:
         time.sleep(0.5)
 
     # LOAD SAVE
-    if query == '6':
+    if query == 6:
         print('---\n Загружаем сохранение\n---')
 
         if user != ENCODE(7):
@@ -178,15 +191,15 @@ while True:
         player_stocks = ENCODE(1)
         stocks_price = ENCODE(2)
         k = ENCODE(3)
-        day = ENCODE(4)
+        day = int(ENCODE(4))
         electricity = ENCODE(5)
-        storymode = ENCODE(6)
+        storymode = int(ENCODE(6))
         LOAD_SOUND()
 
         time.sleep(1)
 
     # SHOP
-    if query == '7':
+    if query == 7:
         items = {
             1: {"name": "аркана на сфа", "price": 2500},
             2: {"name": "телевизор", "price": 10000},
