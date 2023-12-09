@@ -1,5 +1,4 @@
 from functions import *
-from termcolor import colored
 import plotext as plt
 from uuid import getnode as get_user
 
@@ -17,7 +16,7 @@ prices = [stocks_price]
 
 try:
     storymode = ENCODE(6)
-except IndexError:
+except:
     storymode = True
     
 user = get_user()
@@ -43,8 +42,7 @@ while True:
         lastacs = stocks_price
         stocks_price = NEWACS(stocks_price, prices)
         prices.append(stocks_price)
-        if not elecnul:
-            electricity = ELEC_PLUS(electricity)
+        electricity = ELEC_PLUS(electricity)
         day += 1
         next_day = False
 
@@ -100,6 +98,7 @@ while True:
         print(f"\n Хакеры взломали биржу и ограбили вас на {hackers} рубля\n"
               f" Купите защиту от DDOS-атак за 1.000.000 в магазине\n"
               f" Поздравляем, вы купили акции на {inp - hackers} рублей по цене {round(stocks_price, 2)}!\n")
+        BUY_SOUND()
         inp -= hackers
         inp /= stocks_price
         balance -= inp * stocks_price
@@ -128,6 +127,7 @@ while True:
         print(" Ищем покупателя...")
         time.sleep(random.triangular(0.5, 4))
         print(f" Поздравляем, вы продали акции на {inp} рублей по цене {round(stocks_price, 2)}!")
+        SELL_SOUND()
         print()
         inp /= stocks_price
         balance += inp * stocks_price
@@ -150,10 +150,10 @@ while True:
         print("Переводим деньги...")
         time.sleep(0.5)
         print("Перевод выполнен успешно...")
+        PAY_ELEC()
         balance -= electricity
         electricity = 0
         next_day = True
-        elecnul = True
 
     # SAVE PROGESS
     if query == '5':
@@ -161,6 +161,7 @@ while True:
         print(' Сохраняемся')
 
         DECODE(balance, player_stocks, stocks_price, k, day, electricity, int(storymode), user)
+        SAVE_SOUND()
 
         time.sleep(0.5)
 
@@ -180,7 +181,7 @@ while True:
         day = ENCODE(4)
         electricity = ENCODE(5)
         storymode = ENCODE(6)
-
+        LOAD_SOUND()
 
         time.sleep(1)
 
@@ -216,6 +217,7 @@ while True:
                 continue
 
             print(f'---\n Вы приобрели {items[goods]["name"]}!')
+            SHOP_SOUND()
             balance -= items[goods]["price"]
             inventary.append(items[goods]["name"])
             next_day = True
