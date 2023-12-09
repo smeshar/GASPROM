@@ -65,11 +65,13 @@ while True:
 
 
 
-    if (len(inventary) == 1): print(inventary[0])
+    #if (len(inventary) == 1): print(items[inventary[0]]["name"])
 
-    else:
-        for i in inventary:
-            print(i, ", ", end="")
+    if (len(inventary) != 0):
+        for i in range(len(inventary)-1):
+            print(items[inventary[i]]["name"], end=", ")
+
+        print(items[inventary[-1]]["name"])
 
     print(f"\n---\n"
         f" Чтобы приобрести акции нажмите 1 \n"
@@ -173,7 +175,7 @@ while True:
         print('---')
         print(' Сохраняемся')
 
-        DECODE(balance, player_stocks, stocks_price, k, day, electricity, int(storymode), user)
+        DECODE(balance, player_stocks, stocks_price, k, day, electricity, int(storymode), user, inventary)
         SAVE_SOUND()
 
         time.sleep(0.5)
@@ -194,21 +196,13 @@ while True:
         day = int(ENCODE(4))
         electricity = ENCODE(5)
         storymode = int(ENCODE(6))
+        inventary = ENCODE(8)
         LOAD_SOUND()
 
         time.sleep(1)
 
     # SHOP
     if query == 7:
-        items = {
-            1: {"name": "аркана на сфа", "price": 2500},
-            2: {"name": "телевизор", "price": 10000},
-            3: {"name": "ноутбук Apelsin Book", "price": 100000},
-            4: {"name": "защита от DDOS-атак", "price": 1000000},
-            5: {"name": "бугати", "price": 10000000},
-            6: {"name": "квартира в майам... в чебоксарах", "price": 15000000}
-        }
-
         print('---\nМагазин DNS\nДоступные товары:')
 
         for item_id, item_info in items.items():
@@ -232,7 +226,7 @@ while True:
             print(f'---\n Вы приобрели {items[goods]["name"]}!')
             SHOP_SOUND()
             balance -= items[goods]["price"]
-            inventary.append(items[goods]["name"])
+            inventary.append(goods)
             next_day = True
             break
 
