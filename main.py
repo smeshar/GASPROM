@@ -99,6 +99,12 @@ while True:
             print("Неверный ввод")
             time.sleep(1)
             continue
+
+        if inp < 0:
+            print("Неверный ввод")
+            time.sleep(1)
+            continue
+
         if inp > balance:
             print("У вас слишком маленький баланс")
             time.sleep(0.5)
@@ -107,11 +113,11 @@ while True:
         print(f"--- \n Покупка выполняется...")
         time.sleep(0.5)
 
-        hackers = random.randint(0, 300)
-        hackers /= 100
+        hackers = random.randint(0, 500)
+        hackers = (hackers / 100 / 100) * inp
 
         if not "защита от DDOS-атак" in inventary:
-            print(f"Хакеры взломали биржу и ограбили вас на {hackers} рублей.\n"
+            print(f" Хакеры взломали биржу и ограбили вас на {hackers} рублей.\n"
                   f" Купите защиту от DDOS-атак за 1.000.000 в магазине")
 
         print(f" Поздравляем, вы купили акции на {inp - hackers} рублей по цене {round(stocks_price, 2)}!\n")
@@ -128,6 +134,11 @@ while True:
         try:
             inp = float(input())
         except:
+            print("Неверный ввод")
+            time.sleep(1)
+            continue
+
+        if inp < 0:
             print("Неверный ввод")
             time.sleep(1)
             continue
@@ -165,9 +176,12 @@ while True:
         time.sleep(0.5)
         print("Перевод выполнен успешно...")
         PAY_ELEC()
-        electricitylast = electricity
-        balance -= electricitylast
-        electricity -= electricitylast
+        if balance >= electricity:
+            balance -= electricity
+            electricity = 0
+        else:
+            electricity -= balance
+            balance = 0
         next_day = True
 
     # SAVE PROGESS
@@ -203,7 +217,7 @@ while True:
 
     # SHOP
     if query == 7:
-        print('---\nМагазин DNS\nДоступные товары:')
+        print('---\nМагазин DИS\nДоступные товары:')
 
         for item_id, item_info in items.items():
             print(f' {item_id}. {item_info["name"]} - {item_info["price"]} рублей')
