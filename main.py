@@ -4,7 +4,7 @@ from functions import *
 import plotext as plt
 from uuid import getnode as get_user
 
-balance = 1000
+balance = 5000
 player_stocks = 0
 stocks_price = 228.14
 inp = 0
@@ -59,7 +59,7 @@ while True:
 
     print(
         f" Ваш баланс: {round(balance, 2)} \n"
-        f" Ваш баланс в акциях: {player_stocks} \n"
+        f" Ваш баланс в акциях: {round(player_stocks, 2)} \n"
         f" День: {day} \n Неоплаченный счет в банке: {round(electricity, 2)} \n"
         f" Купленные приколюхи: ", end="")
 
