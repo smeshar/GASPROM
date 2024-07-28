@@ -92,7 +92,7 @@ def NEWACS(lastacs, prices):
     else:
         currentAcs = random.triangular(lastacs, 1000, 500)
 
-    finalAcs = currentAcs
+    finalAcs = lastacs + (currentAcs - lastacs) / 10
 
     if len(prices) == 1:
         return (prices[0] + currentAcs) / 2

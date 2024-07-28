@@ -1,20 +1,21 @@
 import time
 
+import connection
 from functions import *
 import plotext as plt
 from uuid import getnode as get_user
 
 balance = 5000
-player_stocks = 0
 stocks_price = 228.14
 inp = 0
-k = 0
+player_stocks = 0
 day = 0
 next_day = True
 elecnul = False
 electricity = 0
 inventary = []
-prices = [stocks_price]
+prices = []
+conn = connection.Conn()
 
 try:
     storymode = ENCODE(6)
@@ -54,12 +55,10 @@ while True:
           f" Акции Газпрома стоят на данный момент: {round(stocks_price, 2)} \n"
           f"---")
 
-    player_stocks = round(k * stocks_price, 2)
-
 
     print(
         f" Ваш баланс: {round(balance, 2)} \n"
-        f" Ваш баланс в акциях: {round(player_stocks, 2)} \n"
+        f" Ваш баланс в акциях: {round(player_stocks * stocks_price, 2)} \n"
         f" День: {day} \n Неоплаченный счет в банке: {round(electricity, 2)} \n"
         f" Купленные приколюхи: ", end="")
 
@@ -78,8 +77,8 @@ while True:
         f" Чтобы продать акции нажмите 2 \n"
         f" Чтобы подождать нажмите 3 \n"
         f" Чтобы оплатить долг нажмите 4 \n"
-        f" Чтобы сохранить игру нажмите 5 \n"
-        f" Чтобы загрузить сохранение нажмите 6 \n"
+        f" Чтобы зарегистрироваться нажмите 5 \n"
+        f" Чтобы войти в аккаунт нажмите 6 \n"
         f" Чтобы зайти в магазин нажмите 7 \n"
         f"---")
 
@@ -113,28 +112,27 @@ while True:
         print(f"--- \n Покупка выполняется...")
         time.sleep(0.5)
 
-        hackers = random.randint(0, 500)
-        hackers = (hackers / 100 / 100) * inp
+        # hackers = random.randint(0, 500)
+        # hackers = (hackers / 100 / 100) * inp
 
-        if not "защита от DDOS-атак" in inventary:
-            print(f" Хакеры взломали биржу и ограбили вас на {hackers} рублей.\n"
-                  f" Купите защиту от DDOS-атак за 1.000.000 в магазине")
+        # if not "защита от DDOS-атак" in inventary:
+        #     print(f" Хакеры взломали биржу и ограбили вас на {hackers} рублей.\n"
+        #           f" Купите защиту от DDOS-атак за 1.000.000 в магазине")
 
-        print(f" Поздравляем, вы купили акции на {inp - hackers} рублей по цене {round(stocks_price, 2)}!\n")
+        print(f" Поздравляем, вы купили акции на {inp} рублей по цене {round(stocks_price, 2)}!\n")
         BUY_SOUND()
-        inp -= hackers
         inp /= stocks_price
         balance -= inp * stocks_price
-        k += inp
+        player_stocks += inp
 
     # SELL STOCKS
     if query == 2:
         print(f"--- \nВведите кол-во рублей на которые вы хотите продать акции")
-        print(f"Ваш баланс позволяет продать: {player_stocks} рублей \n---")
+        print(f"Ваш баланс позволяет продать: {round(player_stocks * stocks_price, 2)} рублей \n---")
         try:
             inp = float(input())
-        except:
-            print("Неверный ввод")
+        except Exception as e:
+            print(f"Неверный ввод, ошибка {e}")
             time.sleep(1)
             continue
 
@@ -143,7 +141,7 @@ while True:
             time.sleep(1)
             continue
 
-        if inp > player_stocks:
+        if inp > round(player_stocks * stocks_price, 2):
             print("Вы ввели число большее чем вы можете продать")
             time.sleep(1)
             print()
@@ -159,7 +157,7 @@ while True:
         print()
         inp /= stocks_price
         balance += inp * stocks_price
-        k -= inp
+        player_stocks -= inp
         next_day = True
 
     # SKIP DAY
@@ -187,36 +185,36 @@ while True:
     # SAVE PROGESS
     if query == 5:
         print('---')
-        print(' Сохраняемся')
-
-        DECODE(balance, player_stocks, stocks_price, k, day, electricity, int(storymode), user, inventary)
-        SAVE_SOUND()
-
+        print(' Введите ваш никнейм')
+        nick = input()
+        print(' Введите пароль')
+        psw = input()
+        if conn.register(nick, psw, balance, player_stocks, electricity, storymode):
+            print(' Успешная регистрация!')
         time.sleep(0.5)
 
     # LOAD SAVE
     if query == 6:
-        print('---\n Загружаем сохранение\n---')
-
-        if user != ENCODE(7):
-            print("Неверный пользователь")
-            time.sleep(1)
-            continue
-
-        balance = ENCODE(0)
-        player_stocks = ENCODE(1)
-        stocks_price = ENCODE(2)
-        k = ENCODE(3)
-        day = int(ENCODE(4))
-        electricity = ENCODE(5)
-        storymode = int(ENCODE(6))
-        inventary = ENCODE(8)
-        LOAD_SOUND()
+        print('---')
+        print(' Введите ваш никнейм')
+        nick = input()
+        print(' Введите пароль')
+        psw = input()
+        l = conn.login(nick, psw)
+        if len(l) != 0:
+            balance = l[1]
+            player_stocks = l[2]
+            elec = l[3]
+            storymode = l[4]
+            print(' Успешная авторизация!')
 
         time.sleep(1)
 
     # SHOP
     if query == 7:
+        print('---\nМагазин DИS\nВременно не работает')
+        time.sleep(0.5)
+        continue
         print('---\nМагазин DИS\nДоступные товары:')
 
         for item_id, item_info in items.items():

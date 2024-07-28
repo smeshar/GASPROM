@@ -19,43 +19,53 @@ class Conn():
                 self.cursor.execute("select database();")
                 record = self.cursor.fetchone()
                 print("You're connected to database: ", record)
-
-                self.cursor.execute("""
-                CREATE TABLE users (
-                    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    name VARCHAR(30),
-                    password VARCHAR(30),
-                    balance DOUBLE,
-                    k DOUBLE,
-                    elec DOUBLE,
-                    storymode,
-                    
-                )
-                """)
                 self.connection.commit()
 
         except Error as e:
             print("Error while connecting to MySQL" + str(e))
 
     def login(self, name: str, password: str):
-        query = f"SELECT password, crypto_bal, bal FROM users WHERE name = '{name}'"
+        query = f"SELECT password, balance, player_stocks, elec, storymode FROM users WHERE name = '{name}'"
         self.cursor.execute(query)
 
         rows = self.cursor.fetchall()
-        if rows is None:
-            print("Несуществующий пользователь")
+        if len(rows) == 0:
+            print(" Несуществующий пользователь")
             return []
 
-        l = list()
+        print(rows)
 
         passw = rows[0][0]
         if passw != password:
-            print("Неверный пароль")
+            print(" Неверный пароль")
             return []
 
         return rows[0]
 
-    # def register(self, name, password, ):
+    def register(self, name, password, balance, player_stocks, elec, storymode):
+        query = f"SELECT * FROM users WHERE name = '{name}'"
+        self.cursor.execute(query)
+        if len(self.cursor.fetchall()) != 0:
+            print(self.cursor.fetchall())
+            print("Пользователь с таким никнеймом уже существует")
+            return 0
+
+        query = f"""INSERT INTO users (name, password, balance, player_stocks, elec, storymode)
+                VALUES ('{name}', '{password}', {balance}, {player_stocks}, {elec}, {storymode})
+                """
+        self.cursor.execute(query)
+        self.connection.commit()
+        return 1
+
+    def update(self):
+        query = f"SELECT * FROM config"
+        self.cursor.execute(query)
+
+        rows = self.cursor.fetchone()
+        if len(rows) == 0:
+            print("Error update config database")
+
+        return rows
 
 
     def fetch_all(self) -> [list]:
