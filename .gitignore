@@ -1,8 +1,8 @@
 # created by virtualenv automatically
-build
-dist
-include
-Lib
-output
-Scripts
-share
+/build
+/dist
+/include
+/Lib
+/output
+/Scripts
+/share

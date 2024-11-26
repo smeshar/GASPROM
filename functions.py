@@ -4,15 +4,22 @@ import math
 import plotext as plt
 import sys
 import winsound
+from colorama import Fore, Back, Style
+
+hostname = "wn9.h.filess.io"
+database = "smeshar_evercryaid"
+port = "3307"
+username = "smeshar_evercryaid"
+password = "3f9bfbd77435c3f029a645427b5abc9292725f40"
 
 def LOGO():
     print('---')
-    print("  ________                                                        ")
+    print(f"{Fore.LIGHTBLUE_EX}  ________                                                        ")
     print(" /  _____/  _____      ______ ______   _______    ____     _____  ")
     print("/   \  ___  \__  \    /  ___/ \____ \  \_  __ \  /  _ \   /     \ ")
     print("\    \_\  \  / __ \_  \___ \  |  |_> >  |  | \/ (  <_> ) |  Y Y  \ ")
     print(" \______  / (____  / /____  > |   __/   |__|     \____/  |__|_|  /")
-    print("        \/       \/       \/  |__|                             \/ ")
+    print(f"        \/       \/       \/  |__|                             \/ {Fore.RESET}")
     print("---")
 
 def story():
@@ -80,7 +87,7 @@ def ENCODE(i):
     return x
 
 
-def NEWACS(lastacs, prices):
+def NEWACS(lastacs, diff):
     choice = random.randint(1, 10)
     f = False
     if choice <= 6:
@@ -92,13 +99,7 @@ def NEWACS(lastacs, prices):
     else:
         currentAcs = random.triangular(lastacs, 1000, 500)
 
-    finalAcs = lastacs + (currentAcs - lastacs) / 10
-
-    if len(prices) == 1:
-        return (prices[0] + currentAcs) / 2
-
-    if len(prices) >= 2:
-        finalAcs = (prices[-1] + prices[-2] + currentAcs) / 3
+    finalAcs = lastacs + (currentAcs - lastacs) / 200 + diff / random.randint(1, 3)
 
     return finalAcs
 

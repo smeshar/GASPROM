@@ -1,31 +1,43 @@
 import mysql.connector
 from mysql.connector import Error
+from colorama import Fore, Back, Style
+import functions
+import time
 
 class Conn():
     def __init__(self):
-        hostname = "wn9.h.filess.io"
-        database = "smeshar_evercryaid"
-        port = "3307"
-        username = "smeshar_evercryaid"
-        password = "3f9bfbd77435c3f029a645427b5abc9292725f40"
+        hostname = functions.hostname
+        database = functions.database
+        password = functions.password
+        port = functions.port
+        username = functions.username
 
         try:
             self.connection = mysql.connector.connect(host=hostname, database=database, user=username, password=password,
                                                  port=port)
+            print("Подключение к базам данных...")
             if self.connection.is_connected():
                 db_Info = self.connection.get_server_info()
-                print("Connected to MySQL Server version ", db_Info)
-                self.cursor = self.connection.cursor()
-                self.cursor.execute("select database();")
-                record = self.cursor.fetchone()
-                print("You're connected to database: ", record)
+                print("Успешное подключение")
+                self.cursor = self.connection.cursor(buffered=True)
+                self.cursor.execute('SELECT * from users')
                 self.connection.commit()
 
         except Error as e:
             print("Error while connecting to MySQL" + str(e))
 
+    def get_prices(self):
+        prices = list()
+        self.cursor.execute("SELECT * FROM prices")
+        rows = self.cursor.fetchall()
+
+        for row in rows:
+            prices.append(row[0])
+
+        return prices
+
     def login(self, name: str, password: str):
-        query = f"SELECT password, balance, player_stocks, elec, storymode FROM users WHERE name = '{name}'"
+        query = f"SELECT * FROM users WHERE name = '{name}'"
         self.cursor.execute(query)
 
         rows = self.cursor.fetchall()
@@ -33,43 +45,113 @@ class Conn():
             print(" Несуществующий пользователь")
             return []
 
-        print(rows)
-
-        passw = rows[0][0]
+        passw = rows[0][2]
         if passw != password:
             print(" Неверный пароль")
             return []
 
         return rows[0]
 
-    def register(self, name, password, balance, player_stocks, elec, storymode):
+    def register(self, name, password, balance, player_stocks):
         query = f"SELECT * FROM users WHERE name = '{name}'"
         self.cursor.execute(query)
         if len(self.cursor.fetchall()) != 0:
-            print(self.cursor.fetchall())
             print("Пользователь с таким никнеймом уже существует")
             return 0
 
-        query = f"""INSERT INTO users (name, password, balance, player_stocks, elec, storymode)
-                VALUES ('{name}', '{password}', {balance}, {player_stocks}, {elec}, {storymode})
+        query = f"""INSERT INTO users (name, password, balance, player_stocks)
+                VALUES ('{name}', '{password}', {balance}, {player_stocks})
                 """
         self.cursor.execute(query)
         self.connection.commit()
         return 1
 
-    def update(self):
-        query = f"SELECT * FROM config"
+    def get_price(self):
+        query = f"SELECT stocks_price FROM config"
         self.cursor.execute(query)
 
         rows = self.cursor.fetchone()
-        if len(rows) == 0:
+        if rows is None:
             print("Error update config database")
+            return 0
 
-        return rows
+        return rows[0]
 
+    def top_ten(self):
+        query = f"SELECT * FROM users ORDER BY balance DESC"
+        self.cursor.execute(query)
+
+        rows = self.cursor.fetchall()
+
+        for i in range(min(10, len(rows))):
+            print(f"{Fore.CYAN}{i + 1}. {rows[i][1]} - {rows[i][3]} руб.{Fore.RESET}")
+
+    def time_to_reload(self):
+        query = "SELECT day FROM config"
+        self.cursor.execute(query)
+
+        rows = self.cursor.fetchone()
+
+        try:
+            return rows[0]
+        except Exception as e:
+            print(e)
+            return 0
+
+    def buy_stocks(self, name, value):
+        query = f"""insert into queue (name, opt, value) values ('{name}', 1, {value})"""
+        try:
+            self.cursor.execute(query)
+            self.connection.commit()
+        except Exception as e:
+            print(e)
+
+    def sell_stocks(self, name, value):
+        query = f"""insert into queue (name, opt, value) values ('{name}', 0, {value})"""
+        try:
+            self.cursor.execute(query)
+            self.connection.commit()
+        except Exception as e:
+            print(e)
+
+    def update(self, id, balance, player_stocks):
+        query = f"UPDATE users SET balance = {balance}, player_stocks = {player_stocks} where id = {id}"
+        self.cursor.execute(query)
+        self.connection.commit()
+        return
+
+    def get_day(self):
+        query = f"SELECT day FROM config"
+        self.cursor.execute(query)
+        rows = self.cursor.fetchone()
+        if rows is None:
+            return -1
+        return rows[0]
+
+    def transactions(self):
+        self.cursor.execute("select stocks_price from config")
+        rows = self.cursor.fetchone()
+        while rows is None:
+            self.cursor.execute("select stocks_price from config")
+            rows = self.cursor.fetchone()
+            time.sleep(0.5)
+
+        stocks_price = rows[0]
+
+        query = f"SELECT * FROM queue"
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+
+        if len(rows) == 0:
+            print(" Пока ничего нет")
+            return
+
+        for row in rows:
+            x = f"купил" if row[1] == 1 else f"продал"
+            print(f" {row[0]} {x} крипты на {round(row[2] * stocks_price, 2)}руб.")
 
     def fetch_all(self) -> [list]:
-        query = "SELECT * FROM users"
+        query = "SELECT * FROM config"
         self.cursor.execute(query)
 
         rows = self.cursor.fetchall()
@@ -84,4 +166,4 @@ class Conn():
         self.cursor.close()
         self.connection.close()
 
-c = Conn()
+# c = Conn()
