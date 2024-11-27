@@ -18,6 +18,7 @@ class Conn():
         self.cursor = self.connection.cursor(buffered=True)
 
     def close(self):
+        self.connection.commit()
         self.cursor.close()
         self.connection.close()
 
@@ -106,6 +107,7 @@ class Conn():
         self.close()
 
     def sell_stocks(self, name, value):
+        self.connect()
         query = f"""insert into queue (name, opt, value) values ('{name}', 0, {value})"""
         self.cursor.execute(query)
         self.connection.commit()
@@ -125,15 +127,6 @@ class Conn():
             return -1
         return rows[0]
 
-    def get_all(self, id, balance, player_stocks) -> list:
-        self.connect()
-
-        l = [self.get_price(), self.get_day(), self.get_prices(), self.time_to_reload(), self.transactions(), self.top_ten()]
-        self.update(id, balance, player_stocks)
-
-        self.close()
-        return l
-
     def transactions(self):
         self.cursor.execute("select stocks_price from config")
         rows = self.cursor.fetchone()
@@ -149,12 +142,23 @@ class Conn():
         rows = self.cursor.fetchall()
 
         if len(rows) == 0:
-            print(" Пока ничего нет")
-            return
+            return[" Пока ничего нет"]
 
+        l = []
         for row in rows:
             x = f"купил" if row[1] == 1 else f"продал"
-            print(f" {row[0]} {x} крипты на {round(row[2] * stocks_price, 2)}руб.")
+            l.append(f" {row[0]} {x} крипты на {round(row[2] * stocks_price, 2)}руб.")
+        return l
+
+    def get_all(self, id, balance, player_stocks) -> list:
+        self.connect()
+
+        l = [self.get_price(), self.get_day(), self.get_prices(), self.time_to_reload(), self.transactions(),
+             self.top_ten()]
+        self.update(id, balance, player_stocks)
+
+        self.close()
+        return l
 
     def fetch_all(self) -> [list]:
         query = "SELECT * FROM config"
@@ -167,5 +171,11 @@ class Conn():
             l.append(row)
 
         return l
+
+    def register_key(self, gamekey):
+        self.connect()
+        query = f"INSERT INTO gamekeys VALUES ('{gamekey}')"
+        self.cursor.execute(query)
+        self.close()
 
 # c = Conn()

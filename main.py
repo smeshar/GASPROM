@@ -7,6 +7,7 @@ from colorama import Fore, Back, Style
 from colorama import just_fix_windows_console
 import os
 import sys
+from key_generator.key_generator import generate
 
 def main():
     just_fix_windows_console()
@@ -83,18 +84,17 @@ def main():
             f" Ваш баланс на криптокошельке: {Fore.BLUE}{round(player_stocks * stocks_price, 2)}{Fore.RESET}\n"
             f" Осталось секунд до обновления курса криптовалюты: {Fore.YELLOW}{all[3]}{Fore.RESET}")
 
-        print(f"""---
-     Текущие транзакции:""")
-        all[4]
+        print(f"""---\n Текущие транзакции:""")
+        for transactions in all[4]: print(transactions)
 
-        print(f"""---
-    {Fore.CYAN}Топ игроков:{Fore.RESET}""")
-        all[5]
+        print(f"""--- {Fore.CYAN}Топ игроков:{Fore.RESET}""")
+        for top_players in all[5]: print(top_players)
 
         print(f"---\n"
               f" {Fore.LIGHTGREEN_EX}Приобрести криптовалюту 1{Fore.RESET}\n"
               f" {Fore.LIGHTRED_EX}Продать криптовалюту 2{Fore.RESET}\n"
               f" {Fore.LIGHTYELLOW_EX}Обновить биржу 3{Fore.RESET}\n"
+              f" {Fore.LIGHTBLUE_EX}Магазин 7{Fore.RESET}\n"
               f"---")
 
         try:
@@ -213,9 +213,9 @@ def main():
 
         # SHOP
         if query == 7:
-            print('---\nМагазин DИS\nВременно не работает')
-            time.sleep(0.5)
-            continue
+            # print('---\nМагазин DИS\nВременно не работает')
+            # time.sleep(0.5)
+            # continue
             print('---\nМагазин DИS\nДоступные товары:')
 
             for item_id, item_info in items.items():
@@ -240,7 +240,13 @@ def main():
                 SHOP_SOUND()
                 balance -= items[goods]["price"]
                 inventary.append(goods)
+                items.clear()
                 next_day = True
+
+                key = generate(seed=time.time()).get_key()
+                conn.register_key(str(key))
+                print(f" Ваш ключ к игре: {key}")
+                print(" Ключ действует только один раз")
                 break
 
             time.sleep(0.5)
