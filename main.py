@@ -174,7 +174,7 @@ def main():
                 time.sleep(1)
                 continue
 
-            if inp > round(player_stocks * stocks_price, 2):
+            if inp > player_stocks * stocks_price:
                 print("Вы не можете продать так много криптовалюты")
                 time.sleep(1)
                 print()
@@ -249,6 +249,8 @@ def main():
                 print(" Ключ действует только один раз")
                 break
 
+            print(" Нажмите любую клавишу для продолжения")
+            a = input()
             time.sleep(0.5)
 
         time.sleep(1)
