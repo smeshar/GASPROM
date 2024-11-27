@@ -6,11 +6,11 @@ import sys
 import winsound
 from colorama import Fore, Back, Style
 
-hostname = "wn9.h.filess.io"
-database = "smeshar_evercryaid"
-port = "3307"
-username = "smeshar_evercryaid"
-password = "3f9bfbd77435c3f029a645427b5abc9292725f40"
+hostname = "sql.freedb.tech"
+database = "freedb_smeshar11DB"
+port = "3306"
+username = "freedb_smeshar"
+password = "aU3f*wAeN$&yVM2"
 
 def LOGO():
     print('---')

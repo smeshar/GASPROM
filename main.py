@@ -67,29 +67,12 @@ def main():
         inp = input()
 
     while True:
-        # if electricity >= 30000:
-        #     print('--- \n'
-        #           ' Ваш долг превысил 30000 рублей')
-        #     time.sleep(5)
-        #     print(' Вы проиграли... Вас выселили')
-        #     print(' Спасибо что поиграли в мою игру, можете попробовать заново!')
-        #     print('---')
-        #     time.sleep(2)
-        #     exit()
 
-        # if next_day:
-        #     lastacs = stocks_price
-        #     stocks_price = NEWACS(stocks_price, prices)
-        #     prices.append(stocks_price)
-        #     # electricity = ELEC_PLUS(electricity)
-        #     # day += 1
-        #     next_day = False
+        all = conn.get_all(id, balance, player_stocks)
 
-        stocks_price = conn.get_price()
-        conn.update(id, balance, player_stocks)
-        conn.get_day()
+        stocks_price = all[0]
 
-        DRAW_PLOT(conn.get_prices())
+        DRAW_PLOT(all[2])
         # EVERYDAY NEWS
         print(f"--- \n"
               f" Криптовалюта Газпром стоит на данный момент: {Fore.LIGHTBLUE_EX}{round(stocks_price, 2)}{Fore.RESET} \n"
@@ -98,23 +81,15 @@ def main():
         print(
             f" Ваш баланс: {Fore.GREEN}{round(balance, 2)}{Fore.RESET}\n"
             f" Ваш баланс на криптокошельке: {Fore.BLUE}{round(player_stocks * stocks_price, 2)}{Fore.RESET}\n"
-            f" Осталось секунд до обновления курса криптовалюты: {Fore.YELLOW}{conn.time_to_reload()}{Fore.RESET}")
+            f" Осталось секунд до обновления курса криптовалюты: {Fore.YELLOW}{all[3]}{Fore.RESET}")
 
         print(f"""---
      Текущие транзакции:""")
-        conn.transactions()
+        all[4]
 
         print(f"""---
     {Fore.CYAN}Топ игроков:{Fore.RESET}""")
-        conn.top_ten()
-
-        # if (len(inventary) == 1): print(items[inventary[0]]["name"])
-
-        # if (len(inventary) != 0):
-        #     for i in range(len(inventary)-1):
-        #         print(items[inventary[i]]["name"], end=", ")
-        #
-        #     print(items[inventary[-1]]["name"])
+        all[5]
 
         print(f"---\n"
               f" {Fore.LIGHTGREEN_EX}Приобрести криптовалюту 1{Fore.RESET}\n"
@@ -236,22 +211,6 @@ def main():
             clear()
             continue
 
-        # PAY FOR ELECTRICITY
-        # if query == 4:
-        #     print('---')
-        #     time.sleep(0.5)
-        #     print("Переводим деньги...")
-        #     time.sleep(0.5)
-        #     print("Перевод выполнен успешно...")
-        #     PAY_ELEC()
-        #     if balance >= electricity:
-        #         balance -= electricity
-        #         electricity = 0
-        #     else:
-        #         electricity -= balance
-        #         balance = 0
-        #     next_day = True
-
         # SHOP
         if query == 7:
             print('---\nМагазин DИS\nВременно не работает')
@@ -292,8 +251,8 @@ def main():
 
 try:
     main()
-except Exception:
-    print("Вы получили ошибку", Exception)
-    tims.sleep(0.5)
+except Exception as e:
+    print("Вы получили ошибку", e)
+    time.sleep(0.5)
     print("Пожалуйста, скопируйте это сообщение и отошлите @noootle в тг")
     a = input()

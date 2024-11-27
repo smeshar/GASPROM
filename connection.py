@@ -6,25 +6,20 @@ import time
 
 class Conn():
     def __init__(self):
-        hostname = functions.hostname
-        database = functions.database
-        password = functions.password
-        port = functions.port
-        username = functions.username
+        self.hostname = functions.hostname
+        self.database = functions.database
+        self.password = functions.password
+        self.port = functions.port
+        self.username = functions.username
 
-        try:
-            self.connection = mysql.connector.connect(host=hostname, database=database, user=username, password=password,
-                                                 port=port)
-            print("Подключение к базам данных...")
-            if self.connection.is_connected():
-                db_Info = self.connection.get_server_info()
-                print("Успешное подключение")
-                self.cursor = self.connection.cursor(buffered=True)
-                self.cursor.execute('SELECT * from users')
-                self.connection.commit()
+    def connect(self):
+        self.connection = mysql.connector.connect(host=self.hostname, database=self.database, user=self.username, password=self.password,
+                                                  port=self.port)
+        self.cursor = self.connection.cursor(buffered=True)
 
-        except Error as e:
-            print("Error while connecting to MySQL" + str(e))
+    def close(self):
+        self.cursor.close()
+        self.connection.close()
 
     def get_prices(self):
         prices = list()
@@ -37,10 +32,12 @@ class Conn():
         return prices
 
     def login(self, name: str, password: str):
+        self.connect()
         query = f"SELECT * FROM users WHERE name = '{name}'"
         self.cursor.execute(query)
 
         rows = self.cursor.fetchall()
+        self.close()
         if len(rows) == 0:
             print(" Несуществующий пользователь")
             return []
@@ -52,11 +49,14 @@ class Conn():
 
         return rows[0]
 
+
     def register(self, name, password, balance, player_stocks):
+        self.connect()
         query = f"SELECT * FROM users WHERE name = '{name}'"
         self.cursor.execute(query)
         if len(self.cursor.fetchall()) != 0:
             print("Пользователь с таким никнеймом уже существует")
+            self.close()
             return 0
 
         query = f"""INSERT INTO users (name, password, balance, player_stocks)
@@ -64,6 +64,7 @@ class Conn():
                 """
         self.cursor.execute(query)
         self.connection.commit()
+        self.close()
         return 1
 
     def get_price(self):
@@ -74,7 +75,6 @@ class Conn():
         if rows is None:
             print("Error update config database")
             return 0
-
         return rows[0]
 
     def top_ten(self):
@@ -83,8 +83,12 @@ class Conn():
 
         rows = self.cursor.fetchall()
 
+        l = []
+
         for i in range(min(10, len(rows))):
-            print(f"{Fore.CYAN}{i + 1}. {rows[i][1]} - {rows[i][3]} руб.{Fore.RESET}")
+            l.append(f"{Fore.CYAN}{i + 1}. {rows[i][1]} - {rows[i][3]} руб.{Fore.RESET}")
+
+        return l
 
     def time_to_reload(self):
         query = "SELECT day FROM config"
@@ -92,27 +96,20 @@ class Conn():
 
         rows = self.cursor.fetchone()
 
-        try:
-            return rows[0]
-        except Exception as e:
-            print(e)
-            return 0
+        return rows[0]
 
     def buy_stocks(self, name, value):
+        self.connect()
         query = f"""insert into queue (name, opt, value) values ('{name}', 1, {value})"""
-        try:
-            self.cursor.execute(query)
-            self.connection.commit()
-        except Exception as e:
-            print(e)
+        self.cursor.execute(query)
+        self.connection.commit()
+        self.close()
 
     def sell_stocks(self, name, value):
         query = f"""insert into queue (name, opt, value) values ('{name}', 0, {value})"""
-        try:
-            self.cursor.execute(query)
-            self.connection.commit()
-        except Exception as e:
-            print(e)
+        self.cursor.execute(query)
+        self.connection.commit()
+        self.close()
 
     def update(self, id, balance, player_stocks):
         query = f"UPDATE users SET balance = {balance}, player_stocks = {player_stocks} where id = {id}"
@@ -127,6 +124,15 @@ class Conn():
         if rows is None:
             return -1
         return rows[0]
+
+    def get_all(self, id, balance, player_stocks) -> list:
+        self.connect()
+
+        l = [self.get_price(), self.get_day(), self.get_prices(), self.time_to_reload(), self.transactions(), self.top_ten()]
+        self.update(id, balance, player_stocks)
+
+        self.close()
+        return l
 
     def transactions(self):
         self.cursor.execute("select stocks_price from config")
@@ -161,9 +167,5 @@ class Conn():
             l.append(row)
 
         return l
-
-    def close(self):
-        self.cursor.close()
-        self.connection.close()
 
 # c = Conn()
