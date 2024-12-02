@@ -1,0 +1,1 @@
+pyinstaller --onefile --paths "D:\GaspromVS\venv\site-packages" main.py --add-data="GaspromVS\buy.wav" main.py
